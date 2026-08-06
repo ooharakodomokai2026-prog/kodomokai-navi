@@ -1,4 +1,5 @@
 import os
+import re
 import streamlit as st
 
 # 画面表示の設定
@@ -11,14 +12,30 @@ st.set_page_config(
 st.title("🎈 子ども会 らくらくナビ 🎈")
 
 # サイドバー（月選択）
-selected_month = st.sidebar.selectbox("月を選択してください", [f"{i}月" for i in range(1, 13)], index=3)  # デフォルトで4月を選択
+selected_month = st.sidebar.selectbox("月を選択してください", [f"{i}月" for i in range(1, 13)], index=3)
 
 st.header(f"✨ {selected_month}の予定と必要な準備")
 
-# ダウンロードボタン生成関数（ファイル名の完全一致チェック機能付き）
+# ファイル名表記のズレ（_と‗の違いなど）を自動で補正してファイルを探す機能
+def find_actual_file(target_filename):
+    if os.path.exists(target_filename):
+        return target_filename
+    
+    # 記号やスペースを除外して比較用文字列を作成
+    def clean_name(s):
+        return re.sub(r'[\_\‗\s]', '', s).lower()
+
+    target_clean = clean_name(target_filename)
+    for f in os.listdir('.'):
+        if clean_name(f) == target_clean:
+            return f
+    return None
+
+# ダウンロードボタン生成関数
 def show_download_button(label, filename):
-    if os.path.exists(filename):
-        ext = os.path.splitext(filename)[1].lower()
+    actual_file = find_actual_file(filename)
+    if actual_file:
+        ext = os.path.splitext(actual_file)[1].lower()
         if ext == ".xlsx":
             mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         elif ext == ".xls":
@@ -28,11 +45,11 @@ def show_download_button(label, filename):
         else:
             mime = "application/octet-stream"
 
-        with open(filename, "rb") as f:
+        with open(actual_file, "rb") as f:
             st.download_button(
                 label=f"📄 {label}",
                 data=f,
-                file_name=filename,
+                file_name=actual_file,
                 mime=mime,
                 use_container_width=True
             )
@@ -58,14 +75,13 @@ if selected_month == "4月":
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとファイルがスマホやPCにダウンロードされます")
 
-        # GitHub上の実際のファイル名を指定
-        show_download_button("お祝い会・迎える会 案内 (Excel)", "お祝い会‗案内‗原紙.xlsx")
-        show_download_button("入会届 育成版 (Excel)", "入学届○○年度‗育成版‗新1年・2～6年用‗原紙.xlsx")
-        show_download_button("入会届 育成休止版 (Excel)", "入学届○○年度‗育成休止版‗新1年・2～6年用‗原紙.xlsx")
+        show_download_button("お祝い会・迎える会 案内 (Excel)", "お祝い会_案内_原紙.xlsx")
+        show_download_button("入会届 育成版 (Excel)", "入学届○○年度_育成版_新1年・2～6年用_原紙.xlsx")
+        show_download_button("入会届 育成休止版 (Excel)", "入学届○○年度_育成休止版_新1年・2～6年用_原紙.xlsx")
         show_download_button("年間行事計画・報告 (Excel)", "令和○○年度_行事計画+報告_原紙.xlsx")
         show_download_button("新役員名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
-        show_download_button("総会案内・委任状 (Excel)", "総会案内○○令和年度委任状‗原紙.xlsx")
-        show_download_button("総会資料次第 (Word)", "1.総会資料令和○○年度‗次第‗原紙.docx")
+        show_download_button("総会案内・委任状 (Excel)", "総会案内○○令和年度委任状_原紙.xlsx")
+        show_download_button("総会資料次第 (Word)", "1.総会資料令和○○年度_次第_原紙.docx")
 
 # 8月のコンテンツ
 elif selected_month == "8月":
