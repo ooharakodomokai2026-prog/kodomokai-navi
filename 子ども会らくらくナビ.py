@@ -1,5 +1,6 @@
 import os
 import re
+import unicodedata
 import streamlit as st
 
 st.set_page_config(
@@ -9,7 +10,7 @@ st.set_page_config(
 )
 
 # --------------------------------------------------
-# デザイン設定（柔らかい色合いとオレンジのタイトル帯を復元）
+# デザイン設定（柔らかい色合いとオレンジのタイトル帯）
 # --------------------------------------------------
 st.markdown("""
 <style>
@@ -38,21 +39,31 @@ h1, h2, h3 {
 """, unsafe_allow_html=True)
 
 
-# 超強力ファイル自動検索機能（記号・全角半角・空白の表記ズレを全自動補正）
+# --------------------------------------------------
+# 超・強力ファイル自動検索機能（記号や「入会/入学」の違いを全自動補正）
+# --------------------------------------------------
 def find_actual_file(target_filename):
     if os.path.exists(target_filename):
         return target_filename
     
     def normalize(s):
-        return re.sub(r'[^\w\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff]', '', s).lower()
+        # 半角・全角を統一
+        s = unicodedata.normalize('NFKC', s)
+        # 〇(漢数字)と○(記号)を消去、「入会/入学」の揺れを同じものとして扱う
+        s = s.replace('〇', '').replace('○', '').replace('入会', '入学')
+        # 漢字・ひらがな・カタカナ・英数字以外（特殊なアンダーバーや記号）をすべて消去
+        return re.sub(r'[^a-zA-Z0-9ぁ-んァ-ヶ一-龥]', '', s)
 
     target_norm = normalize(target_filename)
     target_ext = os.path.splitext(target_filename)[1].lower()
 
     for f in os.listdir('.'):
+        if not os.path.isfile(f):
+            continue
         f_ext = os.path.splitext(f)[1].lower()
         if f_ext == target_ext:
             f_norm = normalize(f)
+            # 記号などを抜いた文字の並びが一致すれば正解とする
             if target_norm in f_norm or f_norm in target_norm:
                 return f
     return None
@@ -104,12 +115,9 @@ if selected_month == "4月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        
-        # 修正箇所：「入学届」→「入会届」、記号の修正
-        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
-        show_download("入会届 育成版 (Excel)", "入会届○○年度_育成版_新1年・2～6年用_原紙.xlsx")
-        show_download("入会届 育成休止版 (Excel)", "入会届○○年度_育成休止版_新1年・2～6年用_原紙.xlsx")
-        
+        show_download("迎える会案内 (Excel)", "お祝い会‗案内‗原紙.xlsx")
+        show_download("入会届 育成版 (Excel)", "入学届○○年度‗育成版‗新1年・2～6年用‗原紙.xlsx")
+        show_download("入会届 育成休止版 (Excel)", "入学届○○年度‗育成休止版‗新1年・2～6年用‗原紙.xlsx")
         show_download("年間行事計画・報告 (Excel)", "令和○○年度_行事計画+報告_原紙.xlsx")
         show_download("新役員名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
@@ -130,7 +138,7 @@ elif selected_month == "5月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
+        show_download("迎える会案内 (Excel)", "お祝い会‗案内‗原紙.xlsx")
         show_download("迎える会 課題打合せ内容 (Excel)", "ようこそ会_課題打合せ内容_①_原紙.xlsx")
         show_download("子ども会名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
