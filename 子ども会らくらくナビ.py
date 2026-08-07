@@ -320,19 +320,7 @@ if uploaded_file is not None:
                 service = build('drive', 'v3', credentials=credentials)
 
                 # ↓↓↓ ご自身のフォルダIDを指定してください ↓↓↓
-                FOLDER_ID = "  "type": "service_account",
-  "project_id": "tribal-ethos-504808-s4",
-  "private_key_id": "825c63193df60837dcd5ba14a7980309d62b3b29",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDFdZMK8AzPE6KC\nkOvCz9CPaeECkParAVuM1HLCcc8DyadGPlJqik36YK8KHVPqflOkSqPXsVpGgGrB\niMjkkilEV5yED75U5IOpNQsRX+3RQDlO+ws9+dCgss9ERYtuWr+j1O/tcPDQLOn9\n4zeOoN+TkDWAIJ++UL9z7D78OcaUU7pRXH23cas69/rPwOzLyUr+1LWCIIxL479Z\nNHbF3aI7YVhFc/RVeH/MA6LZaYF6dCsLG7D3+tcCuTkzohUU/GpmsI6RnA3jOZae\n91T06X508cpr2mcx74cPx5IxC6ui1xqOHVASC9Xi6MZ04up5LnAQJcatI+7sUJ6m\nWOta+DYJAgMBAAECggEAAvQBLzhHpaGgWWId9OS6NJhzPeXdx2z+7KHymSxwyQJC\npwi/Gc1KSvYjK4Se/LwmBYbwgmlApOL7hnOuR74SNzB4KcOjHzKluCQmOqO0+MOP\ni1X1iV3F8/BF5Ag4PB9vBhWnvFnnQzuyHxACFVXC/sV7u+B15qFk1bZTySxk0O7B\ngHV0+GpLYypuciQGJi5XiDy96C57Q6LjtGwLf3M+6No+hnOEEYAVKxDnjzVT5Dth\nCZTlq73X8Tmxdp2+35O+Vlgp1tMBeHlUM1s9UeKIMJOwR5l4+9D3bRucR8J3nFHO\nvJTA3+yH6J27/GCSbzuL9W6XMBBorn7VKK+jriuc+wKBgQDyj2PCAiepO+IIrv0V\nRhpBvj0qAvywyG+XH7X1H44utAOECcR1tuL5p9u8IzyTSdARPJwiVYdWDEaR/8BA\nwcv8CT8tIkJa+NcRGmVy6nCh/LHH4aHJRQ7hoqnoPhl/1UOqJUHM4iRa7ATtgQiK\nm63MH1eOHfuuTzyxvYHb6F4ZZwKBgQDQZnLjqENO7mCmOsK7mIULHGuVOdMqcgiU\nWlUbZElTzxtDxpikPiUhkbzSoil2qm3/24SM3GP42dAVwYaJd98+B1k5aK36hmdd\nWW18qF48Kko+siriDYzFbiPB0CkwnHMFRKKOuUcODseHHbZnKUpdyjj9vbas560a\ngnaWd4zfDwKBgQDTbDCj1oUDefLXZs+qT2RrkYp2qAvhe5Powfc0JcEk7Dt0R586\ni6LjwXBCWORf7aKyo4XkV3CTjDem4qmMyF8o3FZ43LfB28x6V+u9cqOiTkQX2Y/P\ng6Yo/kPi7t4DErzb/YWRNDxEFB1nd2Uei/u9RERo17Gciex5cJlUOQJsWQKBgHKX\nIq1TpE8OfE5rGRCV+PH3GqDfPuGj+lu4n/uD1V4kD1XhKaWGFlyzCiS3zhzV8c4y\nIlxiAwaenfCYjSWhqDsvRzxt9tw+cy+9MJrO6aIjjteSmEncMX+N5FN55mw4WnaX\nGttnvU5ZihUdnWJ0LdQMkfHUE1JXwbNF8XcjHW65AoGBAJR7ixk30qFDFrXDYKgz\nmMVE0m6bFP4iXTTRTxfHvdEoZQP1BhxSeYHl/qkoTrHZ/hmTaVrsccQ0nrq7A8sE\nwcU9eBYgHuHn4yc27obJm9/EnXbZOjav3f8GGLSCJKBTNlhIVKhJbCMzpjg7cAIj\nNxfqFxBe0G8rkTwZ59IHTFYS\n-----END PRIVATE KEY-----\n",
-  "client_email": "kodomokai-bot@tribal-ethos-504808-s4.iam.gserviceaccount.com",
-  "client_id": "101059280057288234931",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/kodomokai-bot%40tribal-ethos-504808-s4.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
-"
+                FOLDER_ID = "ここにメモしたフォルダIDを貼り付けてください"
 
                 file_metadata = {
                     'name': uploaded_file.name,
