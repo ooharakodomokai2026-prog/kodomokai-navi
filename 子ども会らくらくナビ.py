@@ -117,7 +117,6 @@ if selected_month == "4月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        # 変更点：「お祝い会」を「迎える会」に修正
         show_download("迎える会案内 (Excel)", "迎える会_案内_原紙.xlsx")
         show_download("入会届 育成版 (Excel)", "入会届○○年度_育成版_新1年・2～6年用_原紙.xlsx")
         show_download("入会届 育成休止版 (Excel)", "入会届○○年度_育成休止版_新1年・2～6年用_原紙.xlsx")
@@ -141,9 +140,9 @@ elif selected_month == "5月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        # 変更点：「お祝い会」を「迎える会」に修正
         show_download("迎える会案内 (Excel)", "迎える会_案内_原紙.xlsx")
-        show_download("迎える会 課題打合せ内容 (Excel)", "ようこそ会_課題打合せ内容_①_原紙.xlsx")
+        # 変更点：「ようこそ会」を「迎える会」に修正
+        show_download("迎える会 課題打合せ内容 (Excel)", "迎える会_課題打合せ内容_①_原紙.xlsx")
         show_download("子ども会名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
 elif selected_month == "6月":
