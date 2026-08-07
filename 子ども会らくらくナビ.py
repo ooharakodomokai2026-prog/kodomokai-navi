@@ -39,7 +39,7 @@ h1, h2, h3 {
 
 
 # --------------------------------------------------
-# 超・強力ファイル自動検索機能（記号のズレを100%補正）
+# 超・強力ファイル自動検索機能
 # --------------------------------------------------
 def find_actual_file(target_filename):
     if os.path.exists(target_filename):
@@ -63,10 +63,10 @@ def find_actual_file(target_filename):
         if target_clean in f_clean or f_clean in target_clean:
             return f
             
-    # 【最終安全装置】お祝い会専用のキーワード検索
-    if "お祝い" in target_filename:
+    # 【最終安全装置】迎える会専用のキーワード検索
+    if "迎える会" in target_filename:
         for f in os.listdir('.'):
-            if "お祝い" in f: return f
+            if "迎える会" in f: return f
             
     return None
 
@@ -117,7 +117,8 @@ if selected_month == "4月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
+        # 変更点：「お祝い会」を「迎える会」に修正
+        show_download("迎える会案内 (Excel)", "迎える会_案内_原紙.xlsx")
         show_download("入会届 育成版 (Excel)", "入会届○○年度_育成版_新1年・2～6年用_原紙.xlsx")
         show_download("入会届 育成休止版 (Excel)", "入会届○○年度_育成休止版_新1年・2～6年用_原紙.xlsx")
         show_download("年間行事計画・報告 (Excel)", "令和○○年度_行事計画+報告_原紙.xlsx")
@@ -140,7 +141,8 @@ elif selected_month == "5月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
+        # 変更点：「お祝い会」を「迎える会」に修正
+        show_download("迎える会案内 (Excel)", "迎える会_案内_原紙.xlsx")
         show_download("迎える会 課題打合せ内容 (Excel)", "ようこそ会_課題打合せ内容_①_原紙.xlsx")
         show_download("子ども会名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
