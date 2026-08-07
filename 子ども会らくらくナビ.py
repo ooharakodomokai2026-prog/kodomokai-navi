@@ -305,10 +305,10 @@ if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
         with st.spinner("安全な金庫（Googleドライブ）に転送中です...⏳"):
             try:
-                # 安全な読み込み処理（文字列・辞書の両対応）
                 secret_val = st.secrets["google_json"]
                 if isinstance(secret_val, str):
-                    creds_dict = json.loads(secret_val)
+                    # strict=False を指定して制御文字・改行コードのエラーを回避
+                    creds_dict = json.loads(secret_val, strict=False)
                 else:
                     creds_dict = dict(secret_val)
 
@@ -324,7 +324,7 @@ if uploaded_file is not None:
 
                 file_metadata = {
                     'name': uploaded_file.name,
-                    'parents': [FOLDER_ID]
+                    'parents': [1l9SzYOf0p4W08Wmv7x8f1kpSArjMAjmx]
                 }
                 media = MediaIoBaseUpload(uploaded_file, mimetype=uploaded_file.type, resumable=True)
 
