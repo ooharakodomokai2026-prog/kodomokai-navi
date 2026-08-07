@@ -1,10 +1,9 @@
 import os
 import re
 import json
+import base64
+import requests
 import streamlit as st
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseUpload
 
 st.set_page_config(
     page_title="子ども会 らくらくナビ",
@@ -303,28 +302,24 @@ if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
         with st.spinner("Googleドライブに転送中です...⏳"):
             try:
-                # 不可視文字（見えない特殊スペース）を全自動で削除して半角スペースにクレンジング
-                raw_json = st.secrets["json_data"]
-                cleaned_json = raw_json.replace("\xa0", " ").strip()
-                creds_dict = json.loads(cleaned_json, strict=False)
+                # ★★★ ここにコピーしたWebアプリのURLを貼り付けてください ★★★
+                GAS_URL = "https://script.google.com/macros/s/AKfycbw1B9SvJkDRt7d-AQI1vQf5E25O5xmshI-M7J4zbeFiD2VcerS4CYnMspR1yZUsWec/exec"
 
-                credentials = service_account.Credentials.from_service_account_info(
-                    creds_dict,
-                    scopes=["https://www.googleapis.com/auth/drive"]
-                )
+                file_bytes = uploaded_file.read()
+                file_b64 = base64.b64encode(file_bytes).decode('utf-8')
 
-                service = build('drive', 'v3', credentials=credentials)
-
-                FOLDER_ID = "1l9SzYOf0p4W08Wmv7x8f1kpSArjMAjmx"
-
-                file_metadata = {
-                    'name': uploaded_file.name,
-                    'parents': [FOLDER_ID]
+                payload = {
+                    "fileName": uploaded_file.name,
+                    "mimeType": uploaded_file.type or "application/octet-stream",
+                    "fileData": file_b64
                 }
-                media = MediaIoBaseUpload(uploaded_file, mimetype=uploaded_file.type, resumable=True)
 
-                service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+                res = requests.post(GAS_URL, data=json.dumps(payload), headers={"Content-Type": "application/json"})
+                result_data = res.json()
 
-                st.success(f"🎉 提出完了！「{uploaded_file.name}」を共有フォルダに自動保管しました！")
+                if result_data.get("result") == "success":
+                    st.success(f"🎉 提出完了！「{uploaded_file.name}」を共有フォルダに自動保管しました！")
+                else:
+                    st.error(f"❌ 提出に失敗しました: {result_data.get('error')}")
             except Exception as e:
-                st.error(f"❌ エラーが発生しました。設定を確認してください。（詳細: {e}）")
+                st.error(f"❌ エラーが発生しました。（詳細: {e}）")
