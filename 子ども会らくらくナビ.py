@@ -141,7 +141,6 @@ elif selected_month == "5月":
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
         show_download("迎える会案内 (Excel)", "迎える会_案内_原紙.xlsx")
-        # 変更点：「ようこそ会」を「迎える会」に修正
         show_download("迎える会 課題打合せ内容 (Excel)", "迎える会_課題打合せ内容_①_原紙.xlsx")
         show_download("子ども会名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
@@ -161,7 +160,8 @@ elif selected_month == "6月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("店舗・景品・人員選考表 (Excel)", "店舗・飲食・人員選考表_原紙.xlsx")
+        # 変更点：「飲食」を「景品」に修正
+        show_download("店舗・景品・人員選考表 (Excel)", "店舗・景品・人員選考表_原紙.xlsx")
         show_download("決算報告書(予算案) (Excel)", "決算報告書_案+実_原紙.xlsx")
         show_download("夏フェス50円チケット (Excel)", "50円チケット.xlsx")
 
