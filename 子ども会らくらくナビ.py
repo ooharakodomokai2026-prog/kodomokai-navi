@@ -1,5 +1,6 @@
 import os
 import re
+import json
 import streamlit as st
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -302,19 +303,9 @@ if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
         with st.spinner("Googleドライブに転送中です...⏳"):
             try:
-                creds_dict = dict(st.secrets["google_credentials"])
-
-                # どんな改行表記（文字列の \n か実際の改行か）でも本物の改行文字に統一する強力補正
-                pk = str(creds_dict.get("private_key", "")).strip()
-                pk = pk.replace("\\n", "\n")
-                
-                # ヘッダーとフッターを正しく成形
-                if not pk.startswith("-----BEGIN PRIVATE KEY-----"):
-                    pk = "-----BEGIN PRIVATE KEY-----\n" + pk
-                if not pk.endswith("-----END PRIVATE KEY-----"):
-                    pk = pk + "\n-----END PRIVATE KEY-----"
-                
-                creds_dict["private_key"] = pk
+                # SecretsからJSON文字列をそのまま受け取りパースする
+                raw_json = st.secrets["json_data"]
+                creds_dict = json.loads(raw_json, strict=False)
 
                 credentials = service_account.Credentials.from_service_account_info(
                     creds_dict,
