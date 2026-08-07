@@ -1,6 +1,5 @@
 import os
 import re
-import unicodedata
 import streamlit as st
 
 st.set_page_config(
@@ -40,32 +39,35 @@ h1, h2, h3 {
 
 
 # --------------------------------------------------
-# 超・強力ファイル自動検索機能（記号や「入会/入学」の違いを全自動補正）
+# 超・強力ファイル自動検索機能（記号のズレを100%補正）
 # --------------------------------------------------
 def find_actual_file(target_filename):
     if os.path.exists(target_filename):
         return target_filename
     
-    def normalize(s):
-        # 半角・全角を統一
-        s = unicodedata.normalize('NFKC', s)
-        # 〇(漢数字)と○(記号)を消去、「入会/入学」の揺れを同じものとして扱う
-        s = s.replace('〇', '').replace('○', '').replace('入会', '入学')
-        # 漢字・ひらがな・カタカナ・英数字以外（特殊なアンダーバーや記号）をすべて消去
-        return re.sub(r'[^a-zA-Z0-9ぁ-んァ-ヶ一-龥]', '', s)
+    # 記号（通常 _, 特殊 ‗, スペース等）を完全に無視する処理
+    def clean_name(s):
+        name, ext = os.path.splitext(s)
+        # 表記揺れを統一（入会/入学、〇/○）
+        name = name.replace('入会', '入学').replace('〇', '').replace('○', '')
+        # 漢字・ひらがな・カタカナ・英数字「以外」の記号をすべて強制消去
+        name = re.sub(r'[^a-zA-Z0-9ぁ-んァ-ヶ一-龥]', '', name)
+        return name + ext.lower()
 
-    target_norm = normalize(target_filename)
-    target_ext = os.path.splitext(target_filename)[1].lower()
-
+    target_clean = clean_name(target_filename)
+    
     for f in os.listdir('.'):
-        if not os.path.isfile(f):
-            continue
-        f_ext = os.path.splitext(f)[1].lower()
-        if f_ext == target_ext:
-            f_norm = normalize(f)
-            # 記号などを抜いた文字の並びが一致すれば正解とする
-            if target_norm in f_norm or f_norm in target_norm:
-                return f
+        if not os.path.isfile(f): continue
+        f_clean = clean_name(f)
+        # 記号を抜いた文字の並びが一致すれば正解
+        if target_clean in f_clean or f_clean in target_clean:
+            return f
+            
+    # 【最終安全装置】お祝い会専用のキーワード検索
+    if "お祝い" in target_filename:
+        for f in os.listdir('.'):
+            if "お祝い" in f: return f
+            
     return None
 
 # ダウンロードボタン表示関数
@@ -115,9 +117,9 @@ if selected_month == "4月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("迎える会案内 (Excel)", "お祝い会‗案内‗原紙.xlsx")
-        show_download("入会届 育成版 (Excel)", "入学届○○年度‗育成版‗新1年・2～6年用‗原紙.xlsx")
-        show_download("入会届 育成休止版 (Excel)", "入学届○○年度‗育成休止版‗新1年・2～6年用‗原紙.xlsx")
+        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
+        show_download("入会届 育成版 (Excel)", "入会届○○年度_育成版_新1年・2～6年用_原紙.xlsx")
+        show_download("入会届 育成休止版 (Excel)", "入会届○○年度_育成休止版_新1年・2～6年用_原紙.xlsx")
         show_download("年間行事計画・報告 (Excel)", "令和○○年度_行事計画+報告_原紙.xlsx")
         show_download("新役員名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
@@ -138,7 +140,7 @@ elif selected_month == "5月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("迎える会案内 (Excel)", "お祝い会‗案内‗原紙.xlsx")
+        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
         show_download("迎える会 課題打合せ内容 (Excel)", "ようこそ会_課題打合せ内容_①_原紙.xlsx")
         show_download("子ども会名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
@@ -236,7 +238,7 @@ elif selected_month == "10月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("クリスマス会 予算案 (Excel)", "クリスマス会予算案‗原紙.xlsx")
+        show_download("クリスマス会 予算案 (Excel)", "クリスマス会予算案_原紙.xlsx")
         show_download("クリスマス会 案内 (Excel)", "クリスマス会案内_原紙.xlsx")
 
 elif selected_month == "11月":
@@ -255,7 +257,7 @@ elif selected_month == "11月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("クリスマス会 予算案 (Excel)", "クリスマス会予算案‗原紙.xlsx")
+        show_download("クリスマス会 予算案 (Excel)", "クリスマス会予算案_原紙.xlsx")
         show_download("クリスマス会 案内 (Excel)", "クリスマス会案内_原紙.xlsx")
 
 elif selected_month == "12月":
@@ -275,7 +277,7 @@ elif selected_month == "12月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("クリスマス会 予算案・実績 (Excel)", "クリスマス会予算案‗原紙.xlsx")
+        show_download("クリスマス会 予算案・実績 (Excel)", "クリスマス会予算案_原紙.xlsx")
         show_download("クリスマス会 案内 (Excel)", "クリスマス会案内_原紙.xlsx")
         
     st.divider()
@@ -349,7 +351,7 @@ elif selected_month == "3月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("子供会総会 議案書・事業報告書 (Word)", "1.総会資料令和○○年度‗次第‗原紙.docx")
+        show_download("子供会総会 議案書・事業報告書 (Word)", "1.総会資料令和○○年度_次第_原紙.docx")
 
 st.divider()
 
