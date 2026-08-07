@@ -307,7 +307,6 @@ if uploaded_file is not None:
             try:
                 secret_val = st.secrets["google_json"]
                 if isinstance(secret_val, str):
-                    # strict=False を指定して制御文字・改行コードのエラーを回避
                     creds_dict = json.loads(secret_val, strict=False)
                 else:
                     creds_dict = dict(secret_val)
@@ -319,12 +318,12 @@ if uploaded_file is not None:
 
                 service = build('drive', 'v3', credentials=credentials)
 
-                # ↓↓↓ ご自身のフォルダIDを指定してください ↓↓↓
-                FOLDER_ID = "ここにメモしたフォルダIDを貼り付けてください"
+                # フォルダID設定（文字列形式で囲んで正しく設定）
+                FOLDER_ID = "1l9SzYOf0p4W08Wmv7x8f1kpSArjMAjmx"
 
                 file_metadata = {
                     'name': uploaded_file.name,
-                    'parents': [1l9SzYOf0p4W08Wmv7x8f1kpSArjMAjmx]
+                    'parents': [FOLDER_ID]
                 }
                 media = MediaIoBaseUpload(uploaded_file, mimetype=uploaded_file.type, resumable=True)
 
