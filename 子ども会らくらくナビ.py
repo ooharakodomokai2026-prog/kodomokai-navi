@@ -8,7 +8,35 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🎈 子ども会 らくらくナビ 🎈")
+# --------------------------------------------------
+# デザイン設定（柔らかい色合いとオレンジのタイトル帯を復元）
+# --------------------------------------------------
+st.markdown("""
+<style>
+/* 全体の背景色を柔らかいクリーム色に */
+.stApp {
+    background-color: #FFFDF0;
+}
+/* タイトルのオレンジ帯 */
+.custom-title {
+    background-color: #FDB849;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+}
+/* 見出しの色を少し柔らかく */
+h1, h2, h3 {
+    color: #333333;
+}
+</style>
+<div class="custom-title">🎈 子ども会 らくらくナビ 🎈</div>
+""", unsafe_allow_html=True)
+
 
 # 超強力ファイル自動検索機能（記号・全角半角・空白の表記ズレを全自動補正）
 def find_actual_file(target_filename):
@@ -76,9 +104,12 @@ if selected_month == "4月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("迎える会案内 (Excel)", "お祝い会‗案内‗原紙.xlsx")
-        show_download("入会届 育成版 (Excel)", "入学届○○年度‗育成版‗新1年・2～6年用‗原紙.xlsx")
-        show_download("入会届 育成休止版 (Excel)", "入学届○○年度‗育成休止版‗新1年・2～6年用‗原紙.xlsx")
+        
+        # 修正箇所：「入学届」→「入会届」、記号の修正
+        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
+        show_download("入会届 育成版 (Excel)", "入会届○○年度_育成版_新1年・2～6年用_原紙.xlsx")
+        show_download("入会届 育成休止版 (Excel)", "入会届○○年度_育成休止版_新1年・2～6年用_原紙.xlsx")
+        
         show_download("年間行事計画・報告 (Excel)", "令和○○年度_行事計画+報告_原紙.xlsx")
         show_download("新役員名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
@@ -99,7 +130,7 @@ elif selected_month == "5月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        show_download("迎える会案内 (Excel)", "お祝い会‗案内‗原紙.xlsx")
+        show_download("迎える会案内 (Excel)", "お祝い会_案内_原紙.xlsx")
         show_download("迎える会 課題打合せ内容 (Excel)", "ようこそ会_課題打合せ内容_①_原紙.xlsx")
         show_download("子ども会名簿 (Excel)", "○○年度_子ども会名簿_原紙.xlsx")
 
