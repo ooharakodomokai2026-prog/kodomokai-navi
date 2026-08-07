@@ -3,6 +3,7 @@ import re
 import json
 import base64
 import requests
+import datetime
 import streamlit as st
 
 st.set_page_config(
@@ -294,31 +295,38 @@ st.divider()
 
 # --- ファイル提出機能 ---
 st.subheader("📤 完成した資料を提出する（自動保管）")
-st.info("役員さんが作成したファイルを選択して、「提出する」ボタンを押してください。Googleドライブに自動保管されます！")
+st.info("役員さんが作成したファイルを選択して、「提出する」ボタンを押してください。自動的に『〇〇年』フォルダへ『【〇月提出】ファイル名』の形式で整理され保管されます！")
 
 uploaded_file = st.file_uploader("ここにファイルをドラッグ＆ドロップ、または選択してください", key="uploader")
 
 if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
-        with st.spinner("Googleドライブに転送中です...⏳"):
+        with st.spinner("安全なGoogleドライブに自動仕分け中...⏳"):
             try:
-                # ★★★ ここにコピーしたWebアプリのURLを貼り付けてください ★★★
-                GAS_URL = "https://script.google.com/macros/s/AKfycbw1B9SvJkDRt7d-AQI1vQf5E25O5xmshI-M7J4zbeFiD2VcerS4CYnMspR1yZUsWec/exec"
+                # ★★★ ここに新しいWebアプリのURLを貼り付けてください ★★★
+                GAS_URL = "https://script.google.com/macros/s/AKfycbxEyQ4E9HM9c4yV1RoALEypDSSm7bYYuuIu_g2EOtOeJC-gbchvUc2g_77YrZ_ncIsY/exec"
 
                 file_bytes = uploaded_file.read()
                 file_b64 = base64.b64encode(file_bytes).decode('utf-8')
+                
+                # 日本時間で「今の年」を取得
+                JST = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
+                current_year = datetime.datetime.now(JST).year
 
+                # 送信するデータのまとめ
                 payload = {
                     "fileName": uploaded_file.name,
                     "mimeType": uploaded_file.type or "application/octet-stream",
-                    "fileData": file_b64
+                    "fileData": file_b64,
+                    "year": str(current_year),  # 自動取得した年
+                    "month": selected_month     # サイドバーで選んでいる月
                 }
 
                 res = requests.post(GAS_URL, data=json.dumps(payload), headers={"Content-Type": "application/json"})
                 result_data = res.json()
 
                 if result_data.get("result") == "success":
-                    st.success(f"🎉 提出完了！「{uploaded_file.name}」を共有フォルダに自動保管しました！")
+                    st.success(f"🎉 提出完了！「【{selected_month}提出】{uploaded_file.name}」を「{current_year}年」フォルダに自動保管しました！")
                 else:
                     st.error(f"❌ 提出に失敗しました: {result_data.get('error')}")
             except Exception as e:
