@@ -160,7 +160,6 @@ elif selected_month == "6月":
     with col2:
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
-        # 変更点：「飲食」を「景品」に修正
         show_download("店舗・景品・人員選考表 (Excel)", "店舗・景品・人員選考表_原紙.xlsx")
         show_download("決算報告書(予算案) (Excel)", "決算報告書_案+実_原紙.xlsx")
         show_download("夏フェス50円チケット (Excel)", "50円チケット.xlsx")
@@ -337,7 +336,9 @@ elif selected_month == "2月":
         st.subheader("📥 必要な資料・原紙")
         st.caption("ボタンを押すとパソコンのエクセル・ワードが直接開きます")
         show_download("子ども会 決算報告書フォーマット (Excel)", "決算報告書_案+実_原紙.xlsx")
-        show_download("新旧役員引き継ぎチェックリスト (Word)", "新旧役員引き継ぎチェックリスト.docx")
+        
+        # 変更点：チェックリストのファイルが見つからないエラーを削除し、アプリが引き継ぎ資料であることを案内
+        st.info("💡 【引き継ぎについて】\nこの「らくらくナビ」自体が引き継ぎマニュアルです！次期役員さんには、このアプリのURLをLINE等で共有するだけで大枠の引き継ぎが完了します。")
 
 elif selected_month == "3月":
     st.subheader("📌 3月：大原町子供会総会")
