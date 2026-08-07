@@ -306,8 +306,17 @@ if uploaded_file is not None:
         with st.spinner("安全な金庫（Googleドライブ）に転送中です...⏳"):
             try:
                 secret_val = st.secrets["google_json"]
-                if isinstance(secret_val, str):
-                    creds_dict = json.loads(secret_val, strict=False)
+                
+                # 自動切り落とし＆抽出ロジック（余分な文字・改行対策）
+                if isinstance(secret_val, str) or not isinstance(secret_val, dict):
+                    raw_str = str(secret_val)
+                    start_idx = raw_str.find("{")
+                    end_idx = raw_str.rfind("}")
+                    if start_idx != -1 and end_idx != -1:
+                        json_str = raw_str[start_idx:end_idx+1]
+                    else:
+                        json_str = raw_str
+                    creds_dict = json.loads(json_str, strict=False)
                 else:
                     creds_dict = dict(secret_val)
 
@@ -318,7 +327,7 @@ if uploaded_file is not None:
 
                 service = build('drive', 'v3', credentials=credentials)
 
-                # フォルダID設定（文字列形式で囲んで正しく設定）
+                # Googleドライブの提出先フォルダID
                 FOLDER_ID = "1l9SzYOf0p4W08Wmv7x8f1kpSArjMAjmx"
 
                 file_metadata = {
