@@ -303,9 +303,10 @@ if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
         with st.spinner("Googleドライブに転送中です...⏳"):
             try:
-                # SecretsからJSON文字列をそのまま受け取りパースする
+                # 不可視文字（見えない特殊スペース）を全自動で削除して半角スペースにクレンジング
                 raw_json = st.secrets["json_data"]
-                creds_dict = json.loads(raw_json, strict=False)
+                cleaned_json = raw_json.replace("\xa0", " ").strip()
+                creds_dict = json.loads(cleaned_json, strict=False)
 
                 credentials = service_account.Credentials.from_service_account_info(
                     creds_dict,
