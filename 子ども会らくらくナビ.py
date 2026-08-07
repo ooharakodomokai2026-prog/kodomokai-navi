@@ -295,7 +295,7 @@ st.number_input(f"{selected_month}の支出合計（円）", min_value=0, step=1
 
 st.divider()
 
-# --- 🌟 ここからが新機能：ファイル提出（自動保管） ---
+# --- ファイル提出機能 ---
 st.subheader("📤 完成した資料を提出する（自動保管）")
 st.info("役員さんがパソコンやスマホで作成したファイルを選択して、「提出する」ボタンを押してください。所定のGoogleドライブに自動で保管されます！")
 
@@ -305,29 +305,29 @@ if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
         with st.spinner("安全な金庫（Googleドライブ）に転送中です...⏳"):
             try:
-                # 1. Streamlitの秘密の金庫から鍵を取り出す
-                creds_dict = json.loads(st.secrets["google_json"])
+                # 安全な読み込み処理（文字列・辞書の両対応）
+                secret_val = st.secrets["google_json"]
+                if isinstance(secret_val, str):
+                    creds_dict = json.loads(secret_val)
+                else:
+                    creds_dict = dict(secret_val)
+
                 credentials = service_account.Credentials.from_service_account_info(
                     creds_dict,
                     scopes=["https://www.googleapis.com/auth/drive"]
                 )
 
-                # 2. Googleドライブに接続
                 service = build('drive', 'v3', credentials=credentials)
 
-                # 3. 保存先のフォルダIDを指定
-                # ↓↓↓ ★ ここだけ、メモしたご自身のフォルダIDに書き換えてください！ ★ ↓↓↓
+                # ↓↓↓ ご自身のフォルダIDを指定してください ↓↓↓
                 FOLDER_ID = "ここにメモしたフォルダIDを貼り付けてください"
-                # ↑↑↑ ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ↑↑↑
 
-                # 4. アップロード準備
                 file_metadata = {
                     'name': uploaded_file.name,
                     'parents': [FOLDER_ID]
                 }
                 media = MediaIoBaseUpload(uploaded_file, mimetype=uploaded_file.type, resumable=True)
 
-                # 5. 送信！
                 service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
                 st.success(f"🎉 提出完了！「{uploaded_file.name}」を共有フォルダに自動保管しました！")
