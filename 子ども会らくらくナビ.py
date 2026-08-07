@@ -1,6 +1,5 @@
 import os
 import re
-import json
 import streamlit as st
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -114,7 +113,6 @@ if selected_month == "4月":
 elif selected_month == "5月":
     st.subheader("📌 5月：新1年生を迎える会・リーダー研修①・球技大会準備")
     st.write("歓迎会、リーダー研修、夏季球技大会の準備、夏フェスの最初の企画話し合いを行います。")
-    st.write("【迎える会の記念品について】 迎える会の案内と新加入者を記載した名簿を基に、以下の記念品を用意します。 ・新1年生：名入れ鉛筆 ・1年生以外の新加入者：500円分のクオカード\n\n【夏季球技大会について】 参加については体協からのお願いが来てからとなるため、連絡を待ちます。")
     col1, col2 = st.columns([3, 2])
     with col1:
         st.subheader("📝 今月の「やる事」リスト")
@@ -132,7 +130,6 @@ elif selected_month == "5月":
 elif selected_month == "6月":
     st.subheader("📌 6月：夏フェス企画＆予算案・チケット作成・球技大会連絡")
     st.write("夏フェスの企画詳細とチケット作成を進めます。年間予算案の提出も行います。")
-    st.write("【夏季球技大会について】 体協または育成から連絡が来るので、それを子ども会のLINEグループに展開（転送）するだけで基本OKです。要請があった場合のみサポートに入ります。\n\n【夏フェスの準備】 ・店舗、景品、人員の選考表を基に詳細を詰めます。 ・夏フェス用の50円チケットは印刷後、役員で手分けしてハサミで切って作成します！")
     col1, col2 = st.columns([3, 2])
     with col1:
         st.subheader("📝 今月の「やる事」リスト")
@@ -288,7 +285,7 @@ elif selected_month == "3月":
 
 st.divider()
 
-# --- 共通フッター（引き継ぎメモ＆支出合計） ---
+# --- 共通フッター ---
 st.subheader("✍️ 今月の記録を残す（引き継ぎ用）")
 st.text_area(f"{selected_month}の引き継ぎメモ", height=120)
 st.number_input(f"{selected_month}の支出合計（円）", min_value=0, step=1)
@@ -297,28 +294,16 @@ st.divider()
 
 # --- ファイル提出機能 ---
 st.subheader("📤 完成した資料を提出する（自動保管）")
-st.info("役員さんがパソコンやスマホで作成したファイルを選択して、「提出する」ボタンを押してください。所定のGoogleドライブに自動で保管されます！")
+st.info("役員さんが作成したファイルを選択して、「提出する」ボタンを押してください。Googleドライブに自動保管されます！")
 
 uploaded_file = st.file_uploader("ここにファイルをドラッグ＆ドロップ、または選択してください", key="uploader")
 
 if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
-        with st.spinner("安全な金庫（Googleドライブ）に転送中です...⏳"):
+        with st.spinner("Googleドライブに転送中です...⏳"):
             try:
-                secret_val = st.secrets["google_json"]
-                
-                # 自動切り落とし＆抽出ロジック（余分な文字・改行対策）
-                if isinstance(secret_val, str) or not isinstance(secret_val, dict):
-                    raw_str = str(secret_val)
-                    start_idx = raw_str.find("{")
-                    end_idx = raw_str.rfind("}")
-                    if start_idx != -1 and end_idx != -1:
-                        json_str = raw_str[start_idx:end_idx+1]
-                    else:
-                        json_str = raw_str
-                    creds_dict = json.loads(json_str, strict=False)
-                else:
-                    creds_dict = dict(secret_val)
+                # StreamlitのSecretsから辞書形式で直接読み込み
+                creds_dict = dict(st.secrets["google_credentials"])
 
                 credentials = service_account.Credentials.from_service_account_info(
                     creds_dict,
@@ -327,7 +312,6 @@ if uploaded_file is not None:
 
                 service = build('drive', 'v3', credentials=credentials)
 
-                # Googleドライブの提出先フォルダID
                 FOLDER_ID = "1l9SzYOf0p4W08Wmv7x8f1kpSArjMAjmx"
 
                 file_metadata = {
@@ -340,4 +324,4 @@ if uploaded_file is not None:
 
                 st.success(f"🎉 提出完了！「{uploaded_file.name}」を共有フォルダに自動保管しました！")
             except Exception as e:
-                st.error(f"❌ エラーが発生しました。設定（鍵やフォルダID）を確認してください。（詳細: {e}）")
+                st.error(f"❌ エラーが発生しました。設定を確認してください。（詳細: {e}）")
