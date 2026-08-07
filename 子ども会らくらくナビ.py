@@ -302,12 +302,19 @@ if uploaded_file is not None:
     if st.button("✨ このファイルを提出する ✨", use_container_width=True):
         with st.spinner("Googleドライブに転送中です...⏳"):
             try:
-                # 辞書データの取得
                 creds_dict = dict(st.secrets["google_credentials"])
 
-                # 秘密鍵（private_key）の改行表記を実際の改行コードへ強制作成
-                pk = str(creds_dict.get("private_key", ""))
-                creds_dict["private_key"] = pk.replace("\\n", "\n")
+                # どんな改行表記（文字列の \n か実際の改行か）でも本物の改行文字に統一する強力補正
+                pk = str(creds_dict.get("private_key", "")).strip()
+                pk = pk.replace("\\n", "\n")
+                
+                # ヘッダーとフッターを正しく成形
+                if not pk.startswith("-----BEGIN PRIVATE KEY-----"):
+                    pk = "-----BEGIN PRIVATE KEY-----\n" + pk
+                if not pk.endswith("-----END PRIVATE KEY-----"):
+                    pk = pk + "\n-----END PRIVATE KEY-----"
+                
+                creds_dict["private_key"] = pk
 
                 credentials = service_account.Credentials.from_service_account_info(
                     creds_dict,
