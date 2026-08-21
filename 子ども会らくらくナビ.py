@@ -8,22 +8,28 @@ import streamlit as st
 
 st.set_page_config(page_title="子ども会 らくらくナビ", page_icon="🎈", layout="wide")
 
+# --------------------------------------------------
 # デザイン設定
+# --------------------------------------------------
 st.markdown("""
 <style>
 .stApp { background-color: #FFFDF0; }
 .custom-title {
     background-color: #FDB849; color: white; padding: 15px; border-radius: 10px;
     text-align: center; font-size: 2.2rem; font-weight: bold; margin-bottom: 2rem;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
 }
+h1, h2, h3 { color: #333333; }
 </style>
 <div class="custom-title">🎈 子ども会 らくらくナビ 🎈</div>
 """, unsafe_allow_html=True)
 
-# ★★★ ご自身のGASウェブアプリURL ★★★
-GAS_URL = "https://script.google.com/macros/s/AKfycbzhE4SNVf5CbCb0GzMc5BkU9QuiQntbUi_nwjts-xsekXK10aR0BEywRNkx_bJcaHs/exec"
+# ★★★ 正しいGASウェブアプリURL ★★★
+GAS_URL = "https://script.google.com/macros/s/AKfycbzhE4SNVf5CbCf0GzMc5BkU9QuiQntbUi_nwjts-xsekXK10aR0BEywRNkx_bJcaHs/exec"
 
-# ファイル自動検索＆ダウンロード機能
+# --------------------------------------------------
+# 超・強力ファイル自動検索機能
+# --------------------------------------------------
 def find_actual_file(target_filename):
     if os.path.exists(target_filename): return target_filename
     def clean_name(s):
@@ -93,7 +99,7 @@ if st.button("💾 この月のノウハウを更新・保存する", use_contai
                     else:
                         st.error(f"保存処理エラー: {result_json.get('error')}")
                 except Exception:
-                    st.error("❌ GASからの返答がJSON形式ではありません。GASのアクセス権限が「全員(Anyone)」になっているか確認してください。")
+                    st.error("❌ 返答形式エラーです。GASのデプロイでアクセス権限が「全員(Anyone)」になっているか確認してください。")
             else:
                 st.error(f"通信エラー (Status: {save_res.status_code})")
         except Exception as e:
