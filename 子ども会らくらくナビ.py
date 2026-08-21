@@ -20,6 +20,7 @@ st.markdown("""
 <div class="custom-title">🎈 子ども会 らくらくナビ 🎈</div>
 """, unsafe_allow_html=True)
 
+# ★★★ ご自身のGASウェブアプリURL ★★★
 GAS_URL = "https://script.google.com/macros/s/AKfycbzhE4SNVf5CbCb0GzMc5BkU9QuiQntbUi_nwjts-xsekXK10aR0BEywRNkx_bJcaHs/exec"
 
 # ファイル自動検索＆ダウンロード機能
@@ -56,11 +57,12 @@ default_knowhow = {
 # --- GASから保存済みノウハウを取得 ---
 current_knowhow_text = default_knowhow.get(selected_month, "")
 try:
-    res = requests.post(GAS_URL, data=json.dumps({"action": "getKnowhow", "month": selected_month}), headers={"Content-Type": "application/json"})
-    fetched_text = res.json().get("text")
-    if fetched_text:
-        current_knowhow_text = fetched_text
-except:
+    res = requests.post(GAS_URL, data=json.dumps({"action": "getKnowhow", "month": selected_month}), headers={"Content-Type": "application/json"}, timeout=5)
+    if res.status_code == 200:
+        fetched_data = res.json()
+        if fetched_data.get("result") == "success" and fetched_data.get("text"):
+            current_knowhow_text = fetched_data.get("text")
+except Exception:
     pass
 
 # 月別やる事＆原紙
@@ -81,11 +83,19 @@ edited_text = st.text_area("文章を書き換えて下の「保存ボタン」�
 if st.button("💾 この月のノウハウを更新・保存する", use_container_width=True):
     with st.spinner("Googleクラウドへ永久保存中..."):
         try:
-            save_res = requests.post(GAS_URL, data=json.dumps({"action": "saveKnowhow", "month": selected_month, "text": edited_text}), headers={"Content-Type": "application/json"})
-            if save_res.json().get("result") == "success":
-                st.success(f"🎉 {selected_month}のノウハウを永久保存しました！次回以降もこの文章が表示されます。")
+            save_res = requests.post(GAS_URL, data=json.dumps({"action": "saveKnowhow", "month": selected_month, "text": edited_text}), headers={"Content-Type": "application/json"}, timeout=10)
+            
+            if save_res.status_code == 200:
+                try:
+                    result_json = save_res.json()
+                    if result_json.get("result") == "success":
+                        st.success(f"🎉 {selected_month}のノウハウを永久保存しました！次回以降もこの文章が表示されます。")
+                    else:
+                        st.error(f"保存処理エラー: {result_json.get('error')}")
+                except Exception:
+                    st.error("❌ GASからの返答がJSON形式ではありません。GASのアクセス権限が「全員(Anyone)」になっているか確認してください。")
             else:
-                st.error("保存に失敗しました。")
+                st.error(f"通信エラー (Status: {save_res.status_code})")
         except Exception as e:
             st.error(f"エラーが発生しました: {e}")
 
@@ -106,5 +116,7 @@ if uploaded_file and st.button("✨ このファイルを提出する ✨", use_
             "year": str(nendo), "month": selected_month
         }
         res = requests.post(GAS_URL, data=json.dumps(payload), headers={"Content-Type": "application/json"})
-        if res.json().get("result") == "success":
+        if res.status_code == 200 and res.json().get("result") == "success":
             st.success(f"🎉 提出完了！【{selected_month}提出】{uploaded_file.name}")
+        else:
+            st.error("提出に失敗しました。GASの設定を確認してください。")
